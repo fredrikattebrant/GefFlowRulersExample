@@ -125,23 +125,23 @@ public class FlowEditor extends GraphicalEditorWithPalette {
 	}
 
 	private void loadProperties() {
-		FlowRuler ruler;
+		//FlowRuler ruler;
 		
-		ruler = getFlowRuler(PositionConstants.NORTH);
-		FlowRulerProvider flowRulerProvider = new FlowRulerProvider(ruler); 
-		getGraphicalViewer().setProperty(FlowRulerProvider.PROPERTY_HORIZONTAL_RULER, flowRulerProvider);
+		FlowRuler nRuler = getFlowRuler(PositionConstants.NORTH);
+		FlowRulerProvider flowRulerProvider = new FlowRulerProvider(nRuler); 
+		getGraphicalViewer().setProperty(FlowRulerProvider.PROPERTY_NORTH_RULER, flowRulerProvider);
 		getGraphicalViewer().setProperty(FlowRulerProvider.PROPERTY_RULER_VISIBILITY, true);
 		
-		ruler = getFlowRuler(PositionConstants.WEST);
-		flowRulerProvider = new FlowRulerProvider(ruler); 
-		getGraphicalViewer().setProperty(FlowRulerProvider.PROPERTY_VERTICAL_RULER, flowRulerProvider);
+		FlowRuler sRuler = getFlowRuler(PositionConstants.SOUTH);
+		flowRulerProvider = new FlowRulerProvider(sRuler); 
+		getGraphicalViewer().setProperty(FlowRulerProvider.PROPERTY_SOUTH_RULER, flowRulerProvider);
 		getGraphicalViewer().setProperty(FlowRulerProvider.PROPERTY_RULER_VISIBILITY, true);
 
-// TODO: Add SOUTH when replacing with own FLOW Rulers		
-//		ruler = getFlowRuler(PositionConstants.SOUTH);
-//		flowRulerProvider = new FlowRulerProvider(ruler); 
-//		getGraphicalViewer().setProperty(RulerProvider.PROPERTY_, flowRulerProvider);
-//		getGraphicalViewer().setProperty(RulerProvider.PROPERTY_RULER_VISIBILITY, true);
+		FlowRuler wRuler = getFlowRuler(PositionConstants.WEST);
+		flowRulerProvider = new FlowRulerProvider(wRuler); 
+		getGraphicalViewer().setProperty(FlowRulerProvider.PROPERTY_WEST_RULER, flowRulerProvider);
+		getGraphicalViewer().setProperty(FlowRulerProvider.PROPERTY_RULER_VISIBILITY, true);
+
 	}
 	
 	/**

@@ -153,6 +153,7 @@ public class FlowRulerFigure extends Figure {
 		System.out.println("FlowRulerFigure.paintFigure() - marker stuff left out..");
 		
 		clippedBounds.expand(BORDER_WIDTH, 0);
+		System.out.println("Clipped bound: " + clippedBounds.x + ", " + clippedBounds.y);
 		graphics.setForegroundColor(ColorConstants.buttonDarker);
 		graphics.drawLine(
 				transposer.t(clippedBounds.getTopRight().translate(-1, -1)),

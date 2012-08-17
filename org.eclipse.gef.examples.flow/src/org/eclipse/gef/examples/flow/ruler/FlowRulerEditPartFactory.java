@@ -20,7 +20,6 @@ package org.eclipse.gef.examples.flow.ruler;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartFactory;
 import org.eclipse.gef.GraphicalViewer;
-import org.eclipse.gef.rulers.RulerProvider;
 
 /**
  * @author Fredrik Attebrant
@@ -63,35 +62,45 @@ public class FlowRulerEditPartFactory implements EditPartFactory {
 	protected EditPart createRulerEditPart(EditPart parentEditPart, Object model) {
 		return new FlowRulerEditPart(model);
 	}
-	protected Object getHorizontalRuler() {
+	
+	protected Object getNorthRuler() {
 		Object ruler = null;
-		//TODO: Should this be replaced with:
-		// FlowRulerProvider.PROPERTY_SOUTH_RULER or FlowRulerProvider.PROPERTY_NORTH_RULER ?
-		RulerProvider provider = (RulerProvider) diagramViewer
-				.getProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER);
+		FlowRulerProvider provider = (FlowRulerProvider) diagramViewer
+				.getProperty(FlowRulerProvider.PROPERTY_NORTH_RULER);
 		if (provider != null) {
 			ruler = provider.getRuler();
 		}
 		return ruler;
 	}
 
-	protected Object getVerticalRuler() {
+	protected Object getSouthRuler() {
 		Object ruler = null;
-		//TODO: Should this be replaced with:
-		// FlowRulerProvider.PROPERTY_WEST_RULER ?
-		RulerProvider provider = (RulerProvider) diagramViewer
-				.getProperty(RulerProvider.PROPERTY_VERTICAL_RULER);
+		FlowRulerProvider provider = (FlowRulerProvider) diagramViewer
+				.getProperty(FlowRulerProvider.PROPERTY_SOUTH_RULER);
 		if (provider != null) {
 			ruler = provider.getRuler();
 		}
 		return ruler;
 	}
+	
+	protected Object getWestRuler() {
+		Object ruler = null;
+		FlowRulerProvider provider = (FlowRulerProvider) diagramViewer
+				.getProperty(FlowRulerProvider.PROPERTY_WEST_RULER);
+		if (provider != null) {
+			ruler = provider.getRuler();
+		}
+		return ruler;
+	}
+	
+	
 
 	protected boolean isRuler(Object model) {
 		boolean result = false;
 		if (model != null) {
-			result = model == getHorizontalRuler()
-					|| model == getVerticalRuler();
+			result = model == getNorthRuler()
+					|| model == getSouthRuler()
+					|| model == getWestRuler();
 		}
 		return result;
 	}

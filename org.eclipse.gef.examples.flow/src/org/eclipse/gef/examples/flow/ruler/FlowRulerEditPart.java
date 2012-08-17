@@ -62,9 +62,9 @@ public class FlowRulerEditPart extends AbstractGraphicalEditPart {
 	public void deactivate() {
 		super.deactivate();
 		FlowRulerProvider rulerProvider2 = getRulerProvider();
-		if (rulerProvider2 != null) {
+		//if (rulerProvider2 != null) {
 			rulerProvider2.removeRulerChangeListener(listener);
-		}
+		//}
 		getRulerFigure().setZoomManager(null);
 	}
 	
@@ -119,15 +119,19 @@ public class FlowRulerEditPart extends AbstractGraphicalEditPart {
 		super.setParent(parent);
 		if (getParent() != null && diagramViewer == null) {
 			diagramViewer = (GraphicalViewer) getViewer().getProperty(GraphicalViewer.class.toString());
-			FlowRulerProvider northProvider = 
-					(FlowRulerProvider) diagramViewer.getProperty(FlowRulerProvider.PROPERTY_HORIZONTAL_RULER);
-					//(FlowRulerProvider) diagramViewer.getProperty(FlowRulerProvider.PROPERTY_NORTH_RULER);
+			FlowRulerProvider northProvider = (FlowRulerProvider) diagramViewer.getProperty(FlowRulerProvider.PROPERTY_NORTH_RULER);
+			FlowRulerProvider southProvider = (FlowRulerProvider) diagramViewer.getProperty(FlowRulerProvider.PROPERTY_SOUTH_RULER);
+			FlowRulerProvider westProvider = (FlowRulerProvider) diagramViewer.getProperty(FlowRulerProvider.PROPERTY_WEST_RULER);
+			
 			if (northProvider != null && northProvider.getRuler() == getModel()) {
 				rulerProvider = northProvider;
 				north = true;
+			} else if (westProvider != null && westProvider.getRuler() == getModel()) {
+				rulerProvider = westProvider;
+				west = true;
 			} else {
-				// TODO - handle south and west
-				rulerProvider = (FlowRulerProvider) diagramViewer.getProperty(FlowRulerProvider.PROPERTY_VERTICAL_RULER);
+				rulerProvider = southProvider;
+				south = true;
 			}
 		}
 	}

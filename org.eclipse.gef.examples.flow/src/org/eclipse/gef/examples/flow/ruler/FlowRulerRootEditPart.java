@@ -40,10 +40,12 @@ import org.eclipse.gef.editparts.ViewportAutoexposeHelper;
  */
 public class FlowRulerRootEditPart extends SimpleRootEditPart {
 
-	private static final Insets VERTICAL_THRESHOLD = new Insets(18, 0, 18, 0);
-	private static final Insets HORIZONTAL_THRESHOLD = new Insets(0, 18, 0, 18);
+	private static final Insets WEST_THRESHOLD  = new Insets(18, 0, 18, 0);
+	private static final Insets NORTH_THRESHOLD = new Insets(0, 18, 0, 18);
+	private static final Insets SOUTH_THRESHOLD = new Insets(0, 18, 0, 18);
 
-	private boolean horizontal;
+	//private boolean horizontal;
+	private int orientation;
 
 	/**
 	 * Constructor
@@ -51,9 +53,9 @@ public class FlowRulerRootEditPart extends SimpleRootEditPart {
 	 * @param isHorzontal
 	 *            whether or not the corresponding model ruler is horizontal
 	 */
-	public FlowRulerRootEditPart(boolean isHorzontal) {
+	public FlowRulerRootEditPart(int orientation) {
 		super();
-		horizontal = isHorzontal;
+		this.orientation = orientation;
 	}
 
 	/**
@@ -77,9 +79,12 @@ public class FlowRulerRootEditPart extends SimpleRootEditPart {
 	 */
 	public Object getAdapter(Class adapter) {
 		if (adapter == AutoexposeHelper.class) {
-			if (((FlowRulerEditPart) getContents()).isNorth())
-				return new ViewportAutoexposeHelper(this, HORIZONTAL_THRESHOLD);
-			return new ViewportAutoexposeHelper(this, VERTICAL_THRESHOLD);
+			if (((FlowRulerEditPart) getContents()).isNorth()) {
+				return new ViewportAutoexposeHelper(this, NORTH_THRESHOLD);
+			} else if (((FlowRulerEditPart) getContents()).isSouth()) {
+				return new ViewportAutoexposeHelper(this, SOUTH_THRESHOLD);
+			}
+			return new ViewportAutoexposeHelper(this, WEST_THRESHOLD);
 		}
 		return super.getAdapter(adapter);
 	}
@@ -119,10 +124,18 @@ public class FlowRulerRootEditPart extends SimpleRootEditPart {
 			// can't scroll
 			// anymore (otherwise, CTRL + SHIFT + ARROW scrolls it).
 			RangeModel bogusRangeModel;
-			if (horizontal)
+			switch (orientation) {
+			case PositionConstants.NORTH:
+			case PositionConstants.SOUTH:
 				bogusRangeModel = getVerticalRangeModel();
-			else
+				break;
+			case PositionConstants.WEST:
 				bogusRangeModel = getHorizontalRangeModel();
+				break;
+			default:
+				System.out.println("What?");
+				return;
+			}
 			bogusRangeModel.setMinimum(0);
 			bogusRangeModel.setMaximum(100);
 			bogusRangeModel.setValue(0);
@@ -147,19 +160,25 @@ public class FlowRulerRootEditPart extends SimpleRootEditPart {
 			 */
 			if (force) {
 				RangeModel rModel;
-				if (horizontal)
+				if (orientation == PositionConstants.NORTH || orientation == PositionConstants.SOUTH)
 					rModel = getHorizontalRangeModel();
 				else
 					rModel = getVerticalRangeModel();
 				Rectangle contentBounds = Rectangle.SINGLETON;
-				if (horizontal) {
+				if (orientation == PositionConstants.NORTH) {
 					contentBounds.y = 0;
 					contentBounds.x = rModel.getMinimum();
 					contentBounds.height = this.getContents()
 							.getPreferredSize().height;
 					contentBounds.width = rModel.getMaximum()
 							- rModel.getMinimum();
+				} else if (orientation == PositionConstants.SOUTH) {
+					contentBounds.y = rModel.getMaximum();
+					contentBounds.x = rModel.getMinimum();
+					contentBounds.height = this.getContents().getPreferredSize().height;
+					contentBounds.width = rModel.getMaximum() - rModel.getMinimum();
 				} else {
+					// WEST
 					contentBounds.y = rModel.getMinimum();
 					contentBounds.x = 0;
 					contentBounds.height = rModel.getMaximum()
@@ -180,7 +199,7 @@ public class FlowRulerRootEditPart extends SimpleRootEditPart {
 			if (this.getContents() == null)
 				return new Dimension();
 			Dimension pSize = this.getContents().getPreferredSize(wHint, hHint);
-			if (horizontal) {
+			if (orientation == PositionConstants.NORTH || orientation == PositionConstants.SOUTH) {
 				RangeModel rModel = getHorizontalRangeModel();
 				pSize.width = rModel.getMaximum() - rModel.getMinimum();
 			} else {
@@ -208,18 +227,25 @@ public class FlowRulerRootEditPart extends SimpleRootEditPart {
 			if (this.getContents() != null
 					&& ((FlowRulerFigure) this.getContents()).getDrawFocus()) {
 				Rectangle focusBounds = getBounds().getCopy();
+				
+				
 				//TODO: Verify that orientation works as intended replacement of isHorizontal...
 				int orientation = ((FlowRulerFigure) this.getContents()).getOrientation();
-				if (orientation == PositionConstants.NORTH ||
-						orientation == PositionConstants.SOUTH) {
-					System.out.println("FlowRulerRootEditPart.RulerViewport.paintBorder() - as if horizontal");
+				if (orientation == PositionConstants.NORTH) {
+					System.out.println("FlowRulerRootEditPart.RulerViewport.paintBorder() - North");
+					focusBounds.resize(-2, -4);
+					focusBounds.x++;
+					//graphics.setForegroundColor(ColorConstants.red);
+				} else if (orientation == PositionConstants.SOUTH) {
+					System.out.println("FlowRulerRootEditPart.RulerViewport.paintBorder() - South TODO");
 					focusBounds.resize(-2, -4);
 					focusBounds.x++;
 				} else {
-					System.out.println("FlowRulerRootEditPart.RulerViewport.paintBorder() - as if vertical");
+					System.out.println("FlowRulerRootEditPart.RulerViewport.paintBorder() - West");
 					focusBounds.resize(-4, -2);
 					focusBounds.y++;
 				}
+
 				graphics.setForegroundColor(ColorConstants.black);
 				graphics.setBackgroundColor(ColorConstants.white);
 				graphics.drawFocus(focusBounds);

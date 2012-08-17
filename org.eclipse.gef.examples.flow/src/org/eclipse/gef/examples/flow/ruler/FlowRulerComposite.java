@@ -19,7 +19,6 @@ package org.eclipse.gef.examples.flow.ruler;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.draw2d.AbstractBorder;
@@ -32,17 +31,12 @@ import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.RangeModel;
 import org.eclipse.draw2d.Viewport;
 import org.eclipse.draw2d.geometry.Insets;
-import org.eclipse.gef.DragTracker;
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.GraphicalViewer;
-import org.eclipse.gef.Handle;
 import org.eclipse.gef.RootEditPart;
-import org.eclipse.gef.internal.ui.rulers.GuideEditPart;
-import org.eclipse.gef.internal.ui.rulers.RulerContextMenuProvider;
-import org.eclipse.gef.internal.ui.rulers.RulerEditPart;
-import org.eclipse.gef.rulers.RulerProvider;
 import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
 import org.eclipse.gef.ui.parts.ScrollingGraphicalViewer;
 import org.eclipse.gef.ui.rulers.RulerComposite;
@@ -151,15 +145,15 @@ public class FlowRulerComposite extends Composite {
 
 	private GraphicalViewer createRulerContainer(int orientation) {
 		ScrollingGraphicalViewer viewer = new RulerViewer();
-		final boolean isHorizontal = orientation == PositionConstants.NORTH
-				|| orientation == PositionConstants.SOUTH;
+//		final boolean isHorizontal = orientation == PositionConstants.NORTH
+//				|| orientation == PositionConstants.SOUTH;
 
 		// Finish initializing the viewer
-		viewer.setRootEditPart(new FlowRulerRootEditPart(isHorizontal));
+		viewer.setRootEditPart(new FlowRulerRootEditPart(orientation));
 		viewer.setEditPartFactory(new FlowRulerEditPartFactory(diagramViewer));
 		viewer.createControl(this);
 		((GraphicalEditPart) viewer.getRootEditPart()).getFigure().setBorder(
-				new RulerBorder(isHorizontal));
+				new RulerBorder(orientation));
 		viewer.setProperty(GraphicalViewer.class.toString(), diagramViewer);
 
 		// Configure the viewer's control
@@ -173,7 +167,7 @@ public class FlowRulerComposite extends Composite {
 			font = new Font(Display.getCurrent(), data);
 		}
 		canvas.setFont(font);
-		if (isHorizontal) {
+		if (orientation == PositionConstants.NORTH || orientation == PositionConstants.SOUTH) {
 			canvas.getViewport().setHorizontalRangeModel(
 					editor.getViewport().getHorizontalRangeModel());
 		} else {
@@ -305,11 +299,12 @@ public class FlowRulerComposite extends Composite {
 	 * primaryViewer's Control should be a FigureCanvas and a child of this
 	 * Composite. This method should only be invoked once.
 	 * <p>
-	 * To create ruler(s), simply add the RulerProvider(s) (with the right key:
-	 * RulerProvider.PROPERTY_HORIZONTAL_RULER or
-	 * RulerProvider.PROPERTY_VERTICAL_RULER) as a property on the given viewer.
+	 * To create ruler(s), simply add the FlowRulerProvider(s) (with the right key:
+	 * FlowRulerProvider.PROPERTY_NORTH_RULER or
+	 * FlowRulerProvider.PROPERTY_WEST_RULER or
+	 * FlowRulerProvider.PROPERTY_SOUTH_RULER) as a property on the given viewer.
 	 * It can be done after this method is invoked.
-	 * RulerProvider.PROPERTY_RULER_VISIBILITY can be used to show/hide the
+	 * FlowRulerProvider.PROPERTY_RULER_VISIBILITY can be used to show/hide the
 	 * rulers.
 	 * 
 	 * @param primaryViewer
@@ -346,40 +341,49 @@ public class FlowRulerComposite extends Composite {
 		propertyListener = new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				String property = evt.getPropertyName();
-				if (RulerProvider.PROPERTY_HORIZONTAL_RULER.equals(property)) {
+				if (FlowRulerProvider.PROPERTY_NORTH_RULER.equals(property)) {
 					setRuler(
-							(RulerProvider) diagramViewer
-									.getProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER),
+							(FlowRulerProvider) diagramViewer
+									.getProperty(FlowRulerProvider.PROPERTY_NORTH_RULER),
 							PositionConstants.NORTH);
-				} else if (RulerProvider.PROPERTY_VERTICAL_RULER
+				} else if (FlowRulerProvider.PROPERTY_WEST_RULER
 						.equals(property)) {
 					setRuler(
-							(RulerProvider) diagramViewer
-									.getProperty(RulerProvider.PROPERTY_VERTICAL_RULER),
+							(FlowRulerProvider) diagramViewer
+									.getProperty(FlowRulerProvider.PROPERTY_WEST_RULER),
 							PositionConstants.WEST);
-				} else if (RulerProvider.PROPERTY_RULER_VISIBILITY
+				} else if (FlowRulerProvider.PROPERTY_SOUTH_RULER.equals(property)) {
+					setRuler(
+							(FlowRulerProvider) diagramViewer
+								.getProperty(FlowRulerProvider.PROPERTY_SOUTH_RULER), 
+								PositionConstants.SOUTH);
+				} else if (FlowRulerProvider.PROPERTY_RULER_VISIBILITY
 						.equals(property))
 					setRulerVisibility(((Boolean) diagramViewer
-							.getProperty(RulerProvider.PROPERTY_RULER_VISIBILITY))
+							.getProperty(FlowRulerProvider.PROPERTY_RULER_VISIBILITY))
 							.booleanValue());
 			}
 		};
 		diagramViewer.addPropertyChangeListener(propertyListener);
 		Boolean rulerVisibility = (Boolean) diagramViewer
-				.getProperty(RulerProvider.PROPERTY_RULER_VISIBILITY);
+				.getProperty(FlowRulerProvider.PROPERTY_RULER_VISIBILITY);
 		if (rulerVisibility != null)
 			setRulerVisibility(rulerVisibility.booleanValue());
 		setRuler(
-				(RulerProvider) diagramViewer
-						.getProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER),
+				(FlowRulerProvider) diagramViewer
+						.getProperty(FlowRulerProvider.PROPERTY_NORTH_RULER),
 				PositionConstants.NORTH);
 		setRuler(
-				(RulerProvider) diagramViewer
-						.getProperty(RulerProvider.PROPERTY_VERTICAL_RULER),
+				(FlowRulerProvider) diagramViewer
+						.getProperty(FlowRulerProvider.PROPERTY_WEST_RULER),
 				PositionConstants.WEST);
+		setRuler(
+				(FlowRulerProvider) diagramViewer
+						.getProperty(FlowRulerProvider.PROPERTY_SOUTH_RULER),
+				PositionConstants.SOUTH);
 	}
 
-	private void setRuler(RulerProvider provider, int orientation) {
+	private void setRuler(FlowRulerProvider provider, int orientation) {
 		Object ruler = null;
 		if (isRulerVisible && provider != null)
 			// provider.getRuler() might return null (at least the API does not
@@ -431,21 +435,27 @@ public class FlowRulerComposite extends Composite {
 			isRulerVisible = isVisible;
 			if (diagramViewer != null) {
 				setRuler(
-						(RulerProvider) diagramViewer
-								.getProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER),
+						(FlowRulerProvider) diagramViewer
+								.getProperty(FlowRulerProvider.PROPERTY_NORTH_RULER),
 						PositionConstants.NORTH);
 				setRuler(
-						(RulerProvider) diagramViewer
-								.getProperty(RulerProvider.PROPERTY_VERTICAL_RULER),
+						(FlowRulerProvider) diagramViewer
+								.getProperty(FlowRulerProvider.PROPERTY_WEST_RULER),
 						PositionConstants.WEST);
+				setRuler(
+						(FlowRulerProvider) diagramViewer
+								.getProperty(FlowRulerProvider.PROPERTY_SOUTH_RULER),
+						PositionConstants.SOUTH);
 			}
 		}
 	}
 
 	private static class RulerBorder extends AbstractBorder {
-		private static final Insets H_INSETS = new Insets(0, 1, 0, 0);
-		private static final Insets V_INSETS = new Insets(1, 0, 0, 0);
-		private boolean horizontal;
+		private static final Insets NORTH_INSETS = new Insets(0, 1, 0, 0);
+		private static final Insets WEST_INSETS = new Insets(1, 0, 0, 0);
+		private static final Insets SOUTH_INSETS = new Insets(0, 1, 0, 0);
+		
+		private int orientation;
 
 		/**
 		 * Constructor
@@ -454,15 +464,22 @@ public class FlowRulerComposite extends Composite {
 		 *            whether or not the ruler being bordered is horizontal or
 		 *            not
 		 */
-		public RulerBorder(boolean isHorizontal) {
-			horizontal = isHorizontal;
+		public RulerBorder(int orientation) {
+			this.orientation = orientation;
 		}
 
 		/**
 		 * @see org.eclipse.draw2d.Border#getInsets(org.eclipse.draw2d.IFigure)
 		 */
 		public Insets getInsets(IFigure figure) {
-			return horizontal ? H_INSETS : V_INSETS;
+			switch (orientation) {
+			case PositionConstants.NORTH:
+				return NORTH_INSETS;
+			case PositionConstants.WEST:
+				return WEST_INSETS;
+			default:
+				return SOUTH_INSETS;
+			}
 		}
 
 		/**
@@ -471,22 +488,29 @@ public class FlowRulerComposite extends Composite {
 		 */
 		public void paint(IFigure figure, Graphics graphics, Insets insets) {
 			graphics.setForegroundColor(ColorConstants.buttonDarker);
-			if (horizontal) {
+			if (orientation == PositionConstants.NORTH) {
 				graphics.drawLine(
 						figure.getBounds().getTopLeft(),
 						figure.getBounds()
 								.getBottomLeft()
 								.translate(
-										new org.eclipse.draw2d.geometry.Point(
+										new Point(
 												0, -4)));
-			} else {
+			} else if (orientation == PositionConstants.WEST) {
 				graphics.drawLine(
 						figure.getBounds().getTopLeft(),
 						figure.getBounds()
 								.getTopRight()
 								.translate(
-										new org.eclipse.draw2d.geometry.Point(
+										new Point(
 												-4, 0)));
+			} else {
+				graphics.drawLine(
+						figure.getBounds().getTopLeft(),
+						figure.getBounds()
+							.getTopLeft()
+							.translate(
+									new Point(0, 4))); // TODO: what x,y ?
 			}
 		}
 	}
@@ -519,27 +543,27 @@ public class FlowRulerComposite extends Composite {
 		/**
 		 * @see org.eclipse.gef.GraphicalViewer#findHandleAt(org.eclipse.draw2d.geometry.Point)
 		 */
-		public Handle findHandleAt(org.eclipse.draw2d.geometry.Point p) {
-			final GraphicalEditPart gep = (GraphicalEditPart) findObjectAtExcluding(
-					p, new ArrayList());
-			if (gep == null || !(gep instanceof GuideEditPart))
-				return null;
-			return new Handle() {
-				public DragTracker getDragTracker() {
-					return ((GuideEditPart) gep).getDragTracker(null);
-				}
-
-				public org.eclipse.draw2d.geometry.Point getAccessibleLocation() {
-					return null;
-				}
-			};
-		}
+//		public Handle findHandleAt(org.eclipse.draw2d.geometry.Point p) {
+//			final GraphicalEditPart gep = (GraphicalEditPart) findObjectAtExcluding(
+//					p, new ArrayList());
+//			if (gep == null || !(gep instanceof GuideEditPart))
+//				return null;
+//			return new Handle() {
+//				public DragTracker getDragTracker() {
+//					return ((GuideEditPart) gep).getDragTracker(null);
+//				}
+//
+//				public org.eclipse.draw2d.geometry.Point getAccessibleLocation() {
+//					return null;
+//				}
+//			};
+//		}
 
 		/**
 		 * @see org.eclipse.gef.ui.parts.AbstractEditPartViewer#init()
 		 */
 		protected void init() {
-			setContextMenu(new RulerContextMenuProvider(this));
+			//setContextMenu(new RulerContextMenuProvider(this));
 			setKeyHandler(new RulerKeyHandler(this));
 		}
 
@@ -601,27 +625,27 @@ public class FlowRulerComposite extends Composite {
 			public boolean keyPressed(KeyEvent event) {
 				if (event.keyCode == SWT.DEL) {
 					// If a guide has focus, delete it
-					if (getFocusEditPart() instanceof GuideEditPart) {
-						RulerEditPart parent = (RulerEditPart) getFocusEditPart()
-								.getParent();
-						getViewer()
-								.getEditDomain()
-								.getCommandStack()
-								.execute(
-										parent.getRulerProvider()
-												.getDeleteGuideCommand(
-														getFocusEditPart()
-																.getModel()));
-						event.doit = false;
-						return true;
-					}
+//					if (getFocusEditPart() instanceof GuideEditPart) {
+//						RulerEditPart parent = (RulerEditPart) getFocusEditPart()
+//								.getParent();
+//						getViewer()
+//								.getEditDomain()
+//								.getCommandStack()
+//								.execute(
+//										parent.getRulerProvider()
+//												.getDeleteGuideCommand(
+//														getFocusEditPart()
+//																.getModel()));
+//						event.doit = false;
+//						return true;
+//					}
 					return false;
 				} else if (((event.stateMask & SWT.ALT) != 0)
 						&& (event.keyCode == SWT.ARROW_UP)) {
 					// ALT + UP_ARROW pressed
 					// If a guide has focus, give focus to the ruler
 					EditPart parent = getFocusEditPart().getParent();
-					if (parent instanceof RulerEditPart)
+					if (parent instanceof FlowRulerEditPart)
 						navigateTo(getFocusEditPart().getParent(), event);
 					return true;
 				}
