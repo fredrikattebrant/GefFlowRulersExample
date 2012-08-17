@@ -23,6 +23,7 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gef.editpolicies.SelectionEditPolicy;
 
 /**
@@ -38,15 +39,37 @@ public class FlowRulerEditPart extends AbstractGraphicalEditPart {
 	private boolean south = false;
 	private boolean west = false;
 	
+	private FlowRulerChangeListener listener = new FlowRulerChangeListener() {
+		
+		@Override
+		public void notifyPartsChanged(Object part, Object team) {
+			System.out.println("FlowRulerEditPart.FlowRulerChangeLister.notifyPartsChanged()");
+		}
+	};
+	
 	public FlowRulerEditPart(Object model) {
 		setModel(model);
 	}
 	
 	@Override
 	public void activate() {
-		//getRulerProvider().addRulerChangeListener(listener);
-		//getRulerFigure().setZoomManager(getZoomManager());
+		getRulerProvider().addRulerChangeListener(listener);
+		getRulerFigure().setZoomManager(getZoomManager());
 		super.activate();
+	}
+	
+	@Override
+	public void deactivate() {
+		super.deactivate();
+		FlowRulerProvider rulerProvider2 = getRulerProvider();
+		if (rulerProvider2 != null) {
+			rulerProvider2.removeRulerChangeListener(listener);
+		}
+		getRulerFigure().setZoomManager(null);
+	}
+	
+	protected FlowRulerFigure getRulerFigure() {
+		return (FlowRulerFigure) getFigure();
 	}
 	
 	public FlowRulerProvider getRulerProvider()  {
@@ -57,6 +80,10 @@ public class FlowRulerEditPart extends AbstractGraphicalEditPart {
 	protected IFigure createFigure() {
 		FlowRulerFigure ruler = new FlowRulerFigure(getOrientation());
 		return ruler;
+	}
+	
+	public ZoomManager getZoomManager() {
+		return (ZoomManager) diagramViewer.getProperty(ZoomManager.class.toString());
 	}
 
 	/**
@@ -69,7 +96,7 @@ public class FlowRulerEditPart extends AbstractGraphicalEditPart {
 			return PositionConstants.SOUTH;
 		return PositionConstants.WEST;
 	}
-
+	
 	@Override
 	protected void createEditPolicies() {
 		installEditPolicy(EditPolicy.SELECTION_FEEDBACK_ROLE, new FlowRulerSelectionPolicy());
@@ -93,13 +120,14 @@ public class FlowRulerEditPart extends AbstractGraphicalEditPart {
 		if (getParent() != null && diagramViewer == null) {
 			diagramViewer = (GraphicalViewer) getViewer().getProperty(GraphicalViewer.class.toString());
 			FlowRulerProvider northProvider = 
-					(FlowRulerProvider) diagramViewer.getProperty(FlowRulerProvider.PROPERTY_NORTH_RULER);
+					(FlowRulerProvider) diagramViewer.getProperty(FlowRulerProvider.PROPERTY_HORIZONTAL_RULER);
+					//(FlowRulerProvider) diagramViewer.getProperty(FlowRulerProvider.PROPERTY_NORTH_RULER);
 			if (northProvider != null && northProvider.getRuler() == getModel()) {
 				rulerProvider = northProvider;
 				north = true;
 			} else {
 				// TODO - handle south and west
-				// ...
+				rulerProvider = (FlowRulerProvider) diagramViewer.getProperty(FlowRulerProvider.PROPERTY_VERTICAL_RULER);
 			}
 		}
 	}

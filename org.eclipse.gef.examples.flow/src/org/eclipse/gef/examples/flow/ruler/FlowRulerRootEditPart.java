@@ -208,12 +208,15 @@ public class FlowRulerRootEditPart extends SimpleRootEditPart {
 			if (this.getContents() != null
 					&& ((FlowRulerFigure) this.getContents()).getDrawFocus()) {
 				Rectangle focusBounds = getBounds().getCopy();
+				//TODO: Verify that orientation works as intended replacement of isHorizontal...
 				int orientation = ((FlowRulerFigure) this.getContents()).getOrientation();
 				if (orientation == PositionConstants.NORTH ||
 						orientation == PositionConstants.SOUTH) {
+					System.out.println("FlowRulerRootEditPart.RulerViewport.paintBorder() - as if horizontal");
 					focusBounds.resize(-2, -4);
 					focusBounds.x++;
 				} else {
+					System.out.println("FlowRulerRootEditPart.RulerViewport.paintBorder() - as if vertical");
 					focusBounds.resize(-4, -2);
 					focusBounds.y++;
 				}

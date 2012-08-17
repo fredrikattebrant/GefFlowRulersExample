@@ -40,17 +40,27 @@ public class FlowRulerProvider extends RulerProvider {
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (evt.getPropertyName().equals(FlowRuler.PROPERTY_CHILDREN)) {
 				// TODO: Handle child stuff
+				System.out.println("FlowRulerProvider: event: " + FlowRuler.PROPERTY_CHILDREN);
 			}
 		}
 	};
 	
 	public FlowRulerProvider(FlowRuler ruler) {
 		this.ruler = ruler;
+		this.ruler.addPropertyChangeListener(rulerListener);
 	}
 	
-	@Override
 	public Object getRuler() {
 		return ruler;
+	}
+	
+	public void addRulerChangeListener(FlowRulerChangeListener listener) {
+		if (!listeners.contains(listener))
+			listeners.add(listener);
+	}
+
+	public void removeRulerChangeListener(FlowRulerChangeListener listener) {
+		listeners.remove(listener);
 	}
 
 }

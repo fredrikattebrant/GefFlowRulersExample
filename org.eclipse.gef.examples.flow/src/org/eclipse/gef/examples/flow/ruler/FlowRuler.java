@@ -17,6 +17,9 @@
 
 package org.eclipse.gef.examples.flow.ruler;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
 /**
  * @author Fredrik Attebrant
  *
@@ -27,6 +30,8 @@ public class FlowRuler {
 	
 	private int orientation;
 	
+	protected PropertyChangeSupport listeners = new PropertyChangeSupport(this);
+
 	public FlowRuler(int orientation) {
 		this.orientation = orientation;
 	}
@@ -35,4 +40,16 @@ public class FlowRuler {
 		return orientation;
 	}
 	
+	public boolean isHidden() {
+		return false;
+	}
+	
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		listeners.addPropertyChangeListener(listener);
+	}
+	
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		listeners.removePropertyChangeListener(listener);
+	}
+
 }

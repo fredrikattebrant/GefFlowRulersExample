@@ -49,7 +49,7 @@ public class FlowRulerEditPartFactory implements EditPartFactory {
 			part = createRulerEditPart(parentEditPart, model);
 		} else if (model != null) {
 			//part = createGuideEditPart(parentEditPart, model);
-			System.out.println("TODO");
+			System.out.println("FlowRulerEditPartFactory.createEditPart() - no GUIDES supported");
 		}
 		return part;
 	}
@@ -65,6 +65,8 @@ public class FlowRulerEditPartFactory implements EditPartFactory {
 	}
 	protected Object getHorizontalRuler() {
 		Object ruler = null;
+		//TODO: Should this be replaced with:
+		// FlowRulerProvider.PROPERTY_SOUTH_RULER or FlowRulerProvider.PROPERTY_NORTH_RULER ?
 		RulerProvider provider = (RulerProvider) diagramViewer
 				.getProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER);
 		if (provider != null) {
@@ -75,6 +77,8 @@ public class FlowRulerEditPartFactory implements EditPartFactory {
 
 	protected Object getVerticalRuler() {
 		Object ruler = null;
+		//TODO: Should this be replaced with:
+		// FlowRulerProvider.PROPERTY_WEST_RULER ?
 		RulerProvider provider = (RulerProvider) diagramViewer
 				.getProperty(RulerProvider.PROPERTY_VERTICAL_RULER);
 		if (provider != null) {
