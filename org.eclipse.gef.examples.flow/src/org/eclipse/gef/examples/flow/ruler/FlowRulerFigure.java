@@ -40,7 +40,7 @@ import org.eclipse.swt.graphics.Font;
 public class FlowRulerFigure extends Figure {
 
 	public Label labelFigure;
-	public TeamLabelFigure teamLabelFigure;
+	public TeamLabelFigure rulerLabelFigure;
 
 	public int textMargin = 20; //FA: orig: = 3;
 
@@ -94,9 +94,13 @@ public class FlowRulerFigure extends Figure {
 		
 		switch (orientation) {
 		case PositionConstants.NORTH:
-		case PositionConstants.SOUTH:
 			baseLabelText = "Release";
-			numberOfFigures = 10;
+			numberOfFigures = 20;
+			backgroundColor = ColorConstants.gray; 
+			break;
+		case PositionConstants.SOUTH:
+			baseLabelText = "Month";
+			numberOfFigures = 12;
 			backgroundColor = ColorConstants.gray; 
 			break;
 		default:
@@ -111,16 +115,16 @@ public class FlowRulerFigure extends Figure {
 
 		this.orientation = orientation;
 //		setBackgroundColor(ColorConstants.lightBlue); //ColorConstants.listBackground);
-//		setForegroundColor(ColorConstants.listForeground);
+		setForegroundColor(ColorConstants.listForeground);
 		setOpaque(true);
 		
 		for (int i = 0; i < numberOfFigures; i++) {
-			teamLabelFigure = new TeamLabelFigure();
-			add(teamLabelFigure);
-			teamLabelFigure.setText(baseLabelText + i);
-			teamLabelFigure.setFont(new Font(null, "teamlabelfont", 20, SWT.BOLD));
-			teamLabelFigure.setPreferredSize(new Dimension(50, 20));
-			teamLabelFigure.setBackgroundColor(backgroundColor);
+			rulerLabelFigure = new TeamLabelFigure();
+			add(rulerLabelFigure);
+			rulerLabelFigure.setText(baseLabelText + i);
+			rulerLabelFigure.setFont(new Font(null, "teamlabelfont", 20, SWT.BOLD));
+			rulerLabelFigure.setPreferredSize(new Dimension(50, 20));
+			rulerLabelFigure.setBackgroundColor(backgroundColor);
 		}
 	}
 
@@ -195,7 +199,6 @@ public class FlowRulerFigure extends Figure {
 		// TODO: Figure out what to do here instead!
 		
 		clippedBounds.expand(BORDER_WIDTH, 0);
-		System.out.println("Clipped bound: " + clippedBounds.x + ", " + clippedBounds.y);
 		graphics.setForegroundColor(ColorConstants.buttonLightest);
 		graphics.drawLine(
 				transposer.t(clippedBounds.getTopRight().translate(-1, -1)),

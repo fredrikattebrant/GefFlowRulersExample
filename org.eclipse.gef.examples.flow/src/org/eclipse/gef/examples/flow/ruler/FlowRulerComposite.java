@@ -135,8 +135,6 @@ public class FlowRulerComposite extends Composite {
 
 	private GraphicalViewer createRulerContainer(int orientation) {
 		ScrollingGraphicalViewer viewer = new RulerViewer();
-//		final boolean isHorizontal = orientation == PositionConstants.NORTH
-//				|| orientation == PositionConstants.SOUTH;
 
 		// Finish initializing the viewer
 		viewer.setRootEditPart(new FlowRulerRootEditPart(orientation));
@@ -489,30 +487,34 @@ public class FlowRulerComposite extends Composite {
 		 *      org.eclipse.draw2d.Graphics, org.eclipse.draw2d.geometry.Insets)
 		 */
 		public void paint(IFigure figure, Graphics graphics, Insets insets) {
+			System.out.println("\nBorder:  " + figure.getBounds());
 			graphics.setForegroundColor(ColorConstants.buttonDarker);
 			if (orientation == PositionConstants.NORTH) {
+				System.out.println("North border " + figure.getBounds());
 				graphics.drawLine(
 						figure.getBounds().getTopLeft(),
 						figure.getBounds()
 								.getBottomLeft()
 								.translate(
 										new Point(
-												0, -4)));
+												0, -1)));
 			} else if (orientation == PositionConstants.WEST) {
+				System.out.println("West border " + figure.getBounds());
 				graphics.drawLine(
 						figure.getBounds().getTopLeft(),
 						figure.getBounds()
 								.getTopRight()
 								.translate(
 										new Point(
-												-4, 0)));
+												-1, 0)));
 			} else {
+				System.out.println("South border " + figure.getBounds());
 				graphics.drawLine(
 						figure.getBounds().getTopLeft(),
 						figure.getBounds()
-							.getTopLeft()
+							.getBottomLeft()
 							.translate(
-									new Point(0, 4))); // TODO: what x,y ?
+									new Point(0, -4)));
 			}
 		}
 	}

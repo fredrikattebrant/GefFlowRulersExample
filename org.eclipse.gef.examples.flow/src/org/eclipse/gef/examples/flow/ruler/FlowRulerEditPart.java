@@ -48,6 +48,7 @@ public class FlowRulerEditPart extends AbstractGraphicalEditPart {
 	};
 	
 	public FlowRulerEditPart(Object model) {
+		System.out.println("FlowRulerEditPart.FlowRulerEditPart() - model: " + model);
 		setModel(model);
 	}
 	

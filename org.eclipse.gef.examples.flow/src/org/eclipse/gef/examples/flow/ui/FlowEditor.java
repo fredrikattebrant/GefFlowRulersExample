@@ -119,12 +119,14 @@ public class FlowEditor extends GraphicalEditorWithPalette {
 	
 	@Override
 	protected void createGraphicalViewer(Composite parent) {
+		System.out.println("FlowEditor.createGraphicalViewer() - creates rulerComp");
 		rulerComp = new FlowRulerComposite(parent, SWT.NONE);
 		super.createGraphicalViewer(rulerComp);
 		rulerComp.setGraphicalViewer((ScrollingGraphicalViewer) getGraphicalViewer());
 	}
 
 	private void loadProperties() {
+		System.out.println("FlowEditor.loadProperties()");
 		//FlowRuler ruler;
 		
 		FlowRuler nRuler = getFlowRuler(PositionConstants.NORTH);
@@ -172,6 +174,7 @@ public class FlowEditor extends GraphicalEditorWithPalette {
 	 * @see org.eclipse.gef.ui.parts.GraphicalEditor#configureGraphicalViewer()
 	 */
 	protected void configureGraphicalViewer() {
+		System.out.println("FlowEditor.configureGraphicalViewer()");
 		super.configureGraphicalViewer();
 		getGraphicalViewer().setRootEditPart(new ScalableRootEditPart());
 		getGraphicalViewer().setEditPartFactory(new ActivityPartFactory());
@@ -193,6 +196,7 @@ public class FlowEditor extends GraphicalEditorWithPalette {
 	 * @see org.eclipse.gef.ui.parts.GraphicalEditor#initializeGraphicalViewer()
 	 */
 	protected void initializeGraphicalViewer() {
+		System.out.println("FlowEditor.initializeGraphicalViewer()");
 		getGraphicalViewer().setContents(diagram);
 		getGraphicalViewer().addDropTargetListener(
 				new TemplateTransferDropTargetListener(getGraphicalViewer()));

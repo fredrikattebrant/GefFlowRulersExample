@@ -160,20 +160,22 @@ public class FlowRulerRootEditPart extends SimpleRootEditPart {
 			 */
 			if (force) {
 				RangeModel rModel;
-				if (orientation == PositionConstants.NORTH || orientation == PositionConstants.SOUTH)
+				
+				if (orientation == PositionConstants.NORTH || orientation == PositionConstants.SOUTH) {
 					rModel = getHorizontalRangeModel();
-				else
+				} else {
 					rModel = getVerticalRangeModel();
+				}
+				
 				Rectangle contentBounds = Rectangle.SINGLETON;
+				
 				if (orientation == PositionConstants.NORTH) {
 					contentBounds.y = 0;
 					contentBounds.x = rModel.getMinimum();
-					contentBounds.height = this.getContents()
-							.getPreferredSize().height;
-					contentBounds.width = rModel.getMaximum()
-							- rModel.getMinimum();
+					contentBounds.height = this.getContents().getPreferredSize().height;
+					contentBounds.width = rModel.getMaximum() - rModel.getMinimum();
 				} else if (orientation == PositionConstants.SOUTH) {
-					contentBounds.y = rModel.getMaximum();
+					contentBounds.y = 0; // rModel.getMaximum();
 					contentBounds.x = rModel.getMinimum();
 					contentBounds.height = this.getContents().getPreferredSize().height;
 					contentBounds.width = rModel.getMaximum() - rModel.getMinimum();
@@ -181,10 +183,12 @@ public class FlowRulerRootEditPart extends SimpleRootEditPart {
 					// WEST
 					contentBounds.y = rModel.getMinimum();
 					contentBounds.x = 0;
-					contentBounds.height = rModel.getMaximum()
-							- rModel.getMinimum();
+					contentBounds.height = rModel.getMaximum() - rModel.getMinimum();
 					contentBounds.width = this.getContents().getPreferredSize().width;
 				}
+				System.out.println("FlowRulerRootEditPart.RulerViewport.doLayout() - orientation:   " + orientation);
+				System.out.println("FlowRulerRootEditPart.RulerViewport.doLayout() - contentBounds: " + contentBounds);
+				
 				if (!this.getContents().getBounds().equals(contentBounds)) {
 					this.getContents().setBounds(contentBounds);
 					this.getContents().revalidate();
