@@ -130,16 +130,6 @@ public class FlowRulerComposite extends Composite {
 	 * @since 3.6
 	 */
 	public static Rectangle calculateRulerTrim(Canvas canvas) {
-		//TODO: Remove when working since this is Carbon and we don't need this:
-		//
-		// IMPORTANT: As stated in bug #314750, this is a Mac Carbon related
-		// workaround that is not needed on Cocoa.
-		if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
-			Rectangle trim = canvas.computeTrim(0, 0, 0, 0);
-			trim.width = 0 - trim.x * 2;
-			trim.height = 0 - trim.y * 2;
-			return trim;
-		}
 		return new Rectangle(0, 0, 0, 0);
 	}
 
@@ -218,33 +208,36 @@ public class FlowRulerComposite extends Composite {
 	 * @since 3.6
 	 */
 	public void doLayout() {
-		if (left == null && top == null) {
+		if (left == null && top == null && bottom == null) {
 			Rectangle area = getClientArea();
 			if (!editor.getBounds().equals(area))
 				editor.setBounds(area);
 			return;
 		}
 
-		int leftWidth = 0, topHeight = 0;
-		Rectangle leftTrim = null, topTrim = null;
+		int leftWidth = 0, topHeight = 0, bottomHeight = 0;
+		Rectangle leftTrim = null, topTrim = null, bottomTrim = null;
+		
 		if (left != null) {
 			leftTrim = calculateRulerTrim((Canvas) left.getControl());
 			// Adding the trim width here because FigureCanvas#computeSize()
 			// does not
-			leftWidth = left.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).x
-					+ leftTrim.width;
+			leftWidth = left.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).x + leftTrim.width;
 		}
 		if (top != null) {
 			topTrim = calculateRulerTrim((Canvas) top.getControl());
-			topHeight = top.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y
-					+ topTrim.height;
+			topHeight = top.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y + topTrim.height;
+		}
+		if (bottom != null) {
+			bottomTrim = calculateRulerTrim((Canvas) bottom.getControl());
+			bottomHeight = bottom.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y + bottomTrim.height;
 		}
 
 		Rectangle editorSize = getClientArea();
 		editorSize.x = leftWidth;
 		editorSize.y = topHeight;
 		editorSize.width -= leftWidth;
-		editorSize.height -= topHeight;
+		editorSize.height = editorSize.height - topHeight - bottomHeight;
 		editor.setBounds(editorSize);
 
 		/*
@@ -263,6 +256,11 @@ public class FlowRulerComposite extends Composite {
 					editorSize.width - trim.width + topTrim.width + 1,
 					topHeight);
 		}
+		if (bottom != null) {
+			bottom.getControl().setBounds(leftWidth + trim.y + bottomTrim.y -1, 0, 
+					editorSize.width - trim.width + bottomTrim.width + 1,
+					bottomHeight);
+		}
 	}
 
 	private GraphicalViewer getRulerContainer(int orientation) {
@@ -273,6 +271,10 @@ public class FlowRulerComposite extends Composite {
 			break;
 		case PositionConstants.WEST:
 			result = left;
+			break;
+		case PositionConstants.SOUTH:
+			result = bottom;
+			break;
 		}
 		return result;
 	}
@@ -672,6 +674,15 @@ public class FlowRulerComposite extends Composite {
 	 */
 	protected GraphicalViewer getTop() {
 		return top;
+	}
+
+	/**
+	 * Retrieve the bottom ruler graphical viewer.
+	 * 
+	 * @return The bottom ruler graphical viewer.
+	 */
+	protected GraphicalViewer getBottom() {
+		return bottom;
 	}
 
 	/**

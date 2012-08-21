@@ -43,7 +43,7 @@ public class TeamLabelFigure extends RoundedRectangle {
 			
 			setCornerDimensions(new Dimension(1,1));
 			this.setLineWidth(1);
-			setBackgroundColor(ColorConstants.darkGreen);
+			setBackgroundColor(ColorConstants.green);
 			setAntialias(SWT.ON);
 			label = new Label();
 			label.setFont(new Font(null, "teamlabelfont", TEAM_LABEL_FONT_SIZE, SWT.BOLD));

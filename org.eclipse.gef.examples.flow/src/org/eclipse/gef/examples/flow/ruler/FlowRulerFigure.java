@@ -29,6 +29,9 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.draw2d.geometry.Transposer;
 import org.eclipse.gef.editparts.ZoomListener;
 import org.eclipse.gef.editparts.ZoomManager;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 
 /**
  * @author Fredrik Attebrant
@@ -39,7 +42,7 @@ public class FlowRulerFigure extends Figure {
 	public Label labelFigure;
 	public TeamLabelFigure teamLabelFigure;
 
-	public int textMargin = 30; //FA: orig: = 3;
+	public int textMargin = 20; //FA: orig: = 3;
 
 	protected Transposer transposer = new Transposer();
 	private ZoomManager zoomManager;
@@ -67,6 +70,10 @@ public class FlowRulerFigure extends Figure {
 		repaint();
 		layout();
 	}
+	
+	protected boolean isHorizontal() {
+		return orientation == PositionConstants.NORTH || orientation == PositionConstants.SOUTH;
+	}
 
 	protected double getDPU() {
 		if (dpu <= 0) {
@@ -79,44 +86,42 @@ public class FlowRulerFigure extends Figure {
 	}
 
 	public FlowRulerFigure(int orientation) {
-		boolean isHorizontal;
+		this.orientation = orientation;
+		
 		String baseLabelText;
+		int numberOfFigures;
+		Color backgroundColor;
+		
 		switch (orientation) {
 		case PositionConstants.NORTH:
 		case PositionConstants.SOUTH:
-			isHorizontal = true;
-			baseLabelText = "Team";
+			baseLabelText = "Release";
+			numberOfFigures = 10;
+			backgroundColor = ColorConstants.gray; 
 			break;
 		default:
-			isHorizontal = false;
-			baseLabelText = "Release";
+			baseLabelText = "Team";
+			numberOfFigures = 50;
+			backgroundColor = ColorConstants.lightBlue;
 			break;
 		}
-		ToolbarLayout layout = new ToolbarLayout(isHorizontal);
+		ToolbarLayout layout = new ToolbarLayout(isHorizontal());
 		setLayoutManager(layout);
 		
 
 		this.orientation = orientation;
-		setBackgroundColor(ColorConstants.lightBlue); //ColorConstants.listBackground);
-		setForegroundColor(ColorConstants.listForeground);
+//		setBackgroundColor(ColorConstants.lightBlue); //ColorConstants.listBackground);
+//		setForegroundColor(ColorConstants.listForeground);
 		setOpaque(true);
-		//setLayoutManager(new FlowRulerLayout());
 		
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < numberOfFigures; i++) {
 			teamLabelFigure = new TeamLabelFigure();
 			add(teamLabelFigure);
 			teamLabelFigure.setText(baseLabelText + i);
-			setConstraint(teamLabelFigure, new Integer(10));
+			teamLabelFigure.setFont(new Font(null, "teamlabelfont", 20, SWT.BOLD));
+			teamLabelFigure.setPreferredSize(new Dimension(50, 20));
+			teamLabelFigure.setBackgroundColor(backgroundColor);
 		}
-//		
-//		for (int i = 0; i < 10; i++) {
-//			labelFigure = new Label();
-//			add(labelFigure);
-//			labelFigure.setFont(new Font(null, "teamlabelfont", 9, SWT.BOLD));
-//			labelFigure.setText(baseLabelText + i);
-//			labelFigure.setPreferredSize(10, 5);
-//			setConstraint(labelFigure, new Integer(10));
-//		}
 	}
 
 	public int getOrientation() {
@@ -188,24 +193,13 @@ public class FlowRulerFigure extends Figure {
 		
 		// massive amount of code for marks -- leaving out
 		// TODO: Figure out what to do here instead!
-		System.out.println("FlowRulerFigure.paintFigure() - marker stuff left out..");
 		
 		clippedBounds.expand(BORDER_WIDTH, 0);
 		System.out.println("Clipped bound: " + clippedBounds.x + ", " + clippedBounds.y);
-		graphics.setForegroundColor(ColorConstants.buttonDarker);
+		graphics.setForegroundColor(ColorConstants.buttonLightest);
 		graphics.drawLine(
 				transposer.t(clippedBounds.getTopRight().translate(-1, -1)),
 				transposer.t(clippedBounds.getBottomRight().translate(-1, -1)));
 	}
-	
-	/*
-	 * 
-	 * 
-	 * SPACE
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
 	
 }
