@@ -21,12 +21,15 @@ import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.Graphics;
+import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.draw2d.geometry.Transposer;
 import org.eclipse.gef.editparts.ZoomListener;
 import org.eclipse.gef.editparts.ZoomManager;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 
 /**
  * @author Fredrik Attebrant
@@ -34,7 +37,10 @@ import org.eclipse.gef.editparts.ZoomManager;
  */
 public class FlowRulerFigure extends Figure {
 
-	public int textMargin = 3;
+	public Label labelFigure;
+	public TeamLabelFigure teamLabelFigure;
+
+	public int textMargin = 30; //FA: orig: = 3;
 
 	protected Transposer transposer = new Transposer();
 	private ZoomManager zoomManager;
@@ -75,10 +81,22 @@ public class FlowRulerFigure extends Figure {
 
 	public FlowRulerFigure(int orientation) {
 		this.orientation = orientation;
-		setBackgroundColor(ColorConstants.listBackground);
+		setBackgroundColor(ColorConstants.lightBlue); //ColorConstants.listBackground);
 		setForegroundColor(ColorConstants.listForeground);
 		setOpaque(true);
 		setLayoutManager(new FlowRulerLayout());
+		
+//		teamLabelFigure = new TeamLabelFigure();
+//		add(teamLabelFigure);
+//		teamLabelFigure.setText("Test team"); // <<== Add just a simple label, add layout? xy?
+		for (int i = 0; i < 10; i++) {
+			labelFigure = new Label();
+			add(labelFigure);
+			labelFigure.setFont(new Font(null, "teamlabelfont", 9, SWT.BOLD));
+			labelFigure.setText("Team " + i);
+			labelFigure.setPreferredSize(10, 5);
+			setConstraint(labelFigure, new Integer(10));
+		}
 	}
 
 	public int getOrientation() {

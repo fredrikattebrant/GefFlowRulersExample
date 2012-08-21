@@ -51,7 +51,8 @@ public class FlowRulerLayout extends XYLayout implements LayoutManager {
 		for (int i = 0; i < children.size(); i++) {
 			IFigure child = (IFigure) children.get(i);
 			Dimension childSize = child.getPreferredSize();
-			int position = ((Integer) getConstraint(child)).intValue();
+			Object constraint = getConstraint(child);
+			int position = ((Integer) constraint).intValue();
 			switch (((FlowRulerFigure) container).getOrientation()) {
 			case PositionConstants.NORTH:
 			case PositionConstants.SOUTH:

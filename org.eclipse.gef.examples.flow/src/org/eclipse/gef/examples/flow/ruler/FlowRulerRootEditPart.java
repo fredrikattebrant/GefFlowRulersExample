@@ -247,7 +247,7 @@ public class FlowRulerRootEditPart extends SimpleRootEditPart {
 				}
 
 				graphics.setForegroundColor(ColorConstants.black);
-				graphics.setBackgroundColor(ColorConstants.white);
+				graphics.setBackgroundColor(ColorConstants.red);
 				graphics.drawFocus(focusBounds);
 			}
 		}
