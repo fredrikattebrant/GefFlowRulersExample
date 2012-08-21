@@ -23,13 +23,12 @@ import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PositionConstants;
+import org.eclipse.draw2d.ToolbarLayout;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.draw2d.geometry.Transposer;
 import org.eclipse.gef.editparts.ZoomListener;
 import org.eclipse.gef.editparts.ZoomManager;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
 
 /**
  * @author Fredrik Attebrant
@@ -80,23 +79,44 @@ public class FlowRulerFigure extends Figure {
 	}
 
 	public FlowRulerFigure(int orientation) {
+		boolean isHorizontal;
+		String baseLabelText;
+		switch (orientation) {
+		case PositionConstants.NORTH:
+		case PositionConstants.SOUTH:
+			isHorizontal = true;
+			baseLabelText = "Team";
+			break;
+		default:
+			isHorizontal = false;
+			baseLabelText = "Release";
+			break;
+		}
+		ToolbarLayout layout = new ToolbarLayout(isHorizontal);
+		setLayoutManager(layout);
+		
+
 		this.orientation = orientation;
 		setBackgroundColor(ColorConstants.lightBlue); //ColorConstants.listBackground);
 		setForegroundColor(ColorConstants.listForeground);
 		setOpaque(true);
-		setLayoutManager(new FlowRulerLayout());
+		//setLayoutManager(new FlowRulerLayout());
 		
-//		teamLabelFigure = new TeamLabelFigure();
-//		add(teamLabelFigure);
-//		teamLabelFigure.setText("Test team"); // <<== Add just a simple label, add layout? xy?
 		for (int i = 0; i < 10; i++) {
-			labelFigure = new Label();
-			add(labelFigure);
-			labelFigure.setFont(new Font(null, "teamlabelfont", 9, SWT.BOLD));
-			labelFigure.setText("Team " + i);
-			labelFigure.setPreferredSize(10, 5);
-			setConstraint(labelFigure, new Integer(10));
+			teamLabelFigure = new TeamLabelFigure();
+			add(teamLabelFigure);
+			teamLabelFigure.setText(baseLabelText + i);
+			setConstraint(teamLabelFigure, new Integer(10));
 		}
+//		
+//		for (int i = 0; i < 10; i++) {
+//			labelFigure = new Label();
+//			add(labelFigure);
+//			labelFigure.setFont(new Font(null, "teamlabelfont", 9, SWT.BOLD));
+//			labelFigure.setText(baseLabelText + i);
+//			labelFigure.setPreferredSize(10, 5);
+//			setConstraint(labelFigure, new Integer(10));
+//		}
 	}
 
 	public int getOrientation() {

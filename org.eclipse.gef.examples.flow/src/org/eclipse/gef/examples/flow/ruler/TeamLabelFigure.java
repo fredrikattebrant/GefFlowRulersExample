@@ -21,6 +21,7 @@ import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.RoundedRectangle;
+import org.eclipse.draw2d.ToolbarLayout;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
@@ -37,6 +38,9 @@ public class TeamLabelFigure extends RoundedRectangle {
 		Label label;
 		
 		public TeamLabelFigure(){
+			ToolbarLayout layout = new ToolbarLayout();
+			setLayoutManager(layout);
+			
 			setCornerDimensions(new Dimension(1,1));
 			this.setLineWidth(1);
 			setBackgroundColor(ColorConstants.darkGreen);
