@@ -182,7 +182,7 @@ public class FlowRulerFigure extends Figure {
 
 	@Override
 	protected void paintFigure(Graphics graphics) {
-		double dotsPerUnit = getDPU();
+		double dotsPerUnit = getDPU(); // not used - zooming still TBD
 		Rectangle clip = transposer.t(graphics.getClip(Rectangle.SINGLETON));
 		Rectangle figClientArea = transposer.t(getClientArea());
 		
