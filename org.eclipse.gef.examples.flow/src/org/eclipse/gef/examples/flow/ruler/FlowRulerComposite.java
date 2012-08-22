@@ -255,7 +255,7 @@ public class FlowRulerComposite extends Composite {
 					topHeight);
 		}
 		if (bottom != null) {
-			bottom.getControl().setBounds(leftWidth + trim.y + bottomTrim.y -1, 0, 
+			bottom.getControl().setBounds(leftWidth + trim.y + bottomTrim.y -1, topHeight + editorSize.height + 1, 
 					editorSize.width - trim.width + bottomTrim.width + 1,
 					bottomHeight);
 		}
